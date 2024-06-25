@@ -34,6 +34,28 @@ $$
 x_i = x_{i-1} + hf(x_{i-1})
 $$
 
+Para implementar este método a un código de Python, se tienen que crear primero dos vectores. Uno para las variables
+independientes, t, el cual va a ser creado desde la condición inicial hasta la condición final, dividiendo el intervalo
+en subconjuntos de tamaño N. Para esto se aprovecha el paquete de Numpy y se escribe:
+
+    t = np.linspace(ti,tf,N)
+
+Para el vector que va a almacenar los resultados de las variables dependientes, x en este caso, se crea un vector de
+ceros del tamaño del vector t y se incluye su condición inicial. Por lo que:
+
+    x = np.zeros(t.size)
+    x[0] = xi
+
+Una vez hecho esto se genera el paso entre las variables independientes con
+
+    h = ti - tf
+
+Y se crea el for loop encargado de implementar el método:
+
+    for i in range(t.size - 1): 
+        x[i+1] = x[i] + h*f(x[i],t[i])
+    return t,x
+
 ## Método de RK2
 
 El método de Runge-Kutta es una familia de métodos de distinto orden que se pueden utilizar para mejorar la
@@ -60,6 +82,20 @@ $$
 
 Cabe mencionar que este cálculo posee el mismo error que el realizado con el Método de Euler.
 
+La implementación de este método funciona de una manera muy similar a la anterior, con la diferencia de que se agregan las
+variables k's al for loop. Para ello:
+
+    t = np.linspace(ti,tf,N)
+    x = np.zeros(t.size)
+    x[0] = xi
+    h = t[1] - t[0]
+    for i in range(t.size-1):
+        k1 = h*f(x[i],t[i])
+        k2 = h*f(x[i] + (k1/2), t[i] + (h/2))
+        n = x[i] + (h/2)*f(x[i],t[i])
+        x[i+1] = x[i] + h*f(n, t[i] + h/2)
+    return t,x
+
 ## Método de RK4
 
 Nuevamente, este es un método de Runge-Kutta, solo que esta vez de orden 4. Consiste en aplicar la misma metodología anterior
@@ -85,4 +121,19 @@ x(t+h) = x(t) + \\frac{1}{6}(k_1 + 2 k_2 + 2k_3 + k_4)
 $$
 
 El error de aproximación asociado a este método es del orden de $O(h^5)$.
+
+Nuevamente, para implementar este método se sigue el mismo procedimiento, con la suma diferencia de que se tienen que agregar las
+variables k's al for loop:
+
+    t = np.linspace(ti,tf,N)
+    x = np.zeros(t.size)
+    x[0] = xi
+    h = t[1] - t[0]
+    for i in range(t.size-1):
+        k1 = h*f(x[i],t[i])
+        k2 = h*f(x[i] + (k1/2), t[i] + (h/2))
+        k3 = h*f(x[i] + (k2/2), t[i] + (h/2))
+        k4 = h*f(x[i] + k3, t[i] + h)
+        x[i+1] = x[i] + (1/6)*(k1 + 2*k2 + 2*k3 + k4)
+    return t,x
 """
